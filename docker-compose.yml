@@ -14,6 +14,12 @@ services:
       - ./BD/TABLAS_BD.sql:/docker-entrypoint-initdb.d/01_TABLAS_BD.sql
       - ./BD/sps.sql:/docker-entrypoint-initdb.d/02_sps.sql
       - ./BD/EVENTS.sql:/docker-entrypoint-initdb.d/03_EVENTS.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot_password_2026"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   backend:
     build: ./backend
@@ -27,7 +33,8 @@ services:
       - DB_PASSWORD=root_password_2026
       - DB_NAME=dale1mano_db
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   frontend:
     build: ./dale1mano-web

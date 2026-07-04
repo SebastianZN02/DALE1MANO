@@ -13,6 +13,10 @@ class TestimoniosRepository(ITestimoniosRepository):
         try:
             cursor.callproc('SP_ObtenerTestimonios')
             resultados = next(cursor.stored_results()).fetchall()
+            for r in resultados:
+                if r.get("fecha_publicacion"):
+                    r["fecha_publicacion"] = r["fecha_publicacion"].isoformat()
+                r["aprobado"] = bool(r.get("aprobado", 0))
             return resultados
         except Exception as e:
             raise e
@@ -21,13 +25,28 @@ class TestimoniosRepository(ITestimoniosRepository):
             self.db.close_connection(conn)
 
     def obtener_todos(self):
+        """
+        Retorna todos los testimonios (aprobados y pendientes) con LEFT JOIN
+        para no fallar si el proyecto fue eliminado.
+        """
         conn = self.db.get_connection()
         cursor = conn.cursor(dictionary=True)
         try:
             cursor.execute(
-                "SELECT t.id_testimonio, t.id_usuario, t.id_proyecto, u.nombre_completo, p.titulo AS proyecto, t.contenido, t.url_video, t.fecha_publicacion, t.aprobado FROM Testimonios t INNER JOIN Usuarios u ON t.id_usuario = u.id_usuario INNER JOIN Proyectos p ON t.id_proyecto = p.id_proyecto ORDER BY t.fecha_publicacion DESC"
+                "SELECT t.id_testimonio, t.id_usuario, t.id_proyecto, "
+                "u.nombre_completo, "
+                "COALESCE(p.titulo, 'Proyecto General') AS proyecto, "
+                "t.contenido, t.url_video, t.fecha_publicacion, t.aprobado "
+                "FROM Testimonios t "
+                "INNER JOIN Usuarios u ON t.id_usuario = u.id_usuario "
+                "LEFT JOIN Proyectos p ON t.id_proyecto = p.id_proyecto "
+                "ORDER BY t.fecha_publicacion DESC"
             )
             resultados = cursor.fetchall()
+            for r in resultados:
+                if r.get("fecha_publicacion"):
+                    r["fecha_publicacion"] = r["fecha_publicacion"].isoformat()
+                r["aprobado"] = bool(r.get("aprobado", 0))
             return resultados
         except Exception as e:
             raise e
@@ -74,7 +93,8 @@ class TestimoniosRepository(ITestimoniosRepository):
         cursor = conn.cursor()
         try:
             cursor.execute(
-                "INSERT INTO Testimonios (id_usuario, id_proyecto, contenido, url_video, aprobado) VALUES (%s, %s, %s, %s, FALSE)",
+                "INSERT INTO Testimonios (id_usuario, id_proyecto, contenido, url_video, aprobado) "
+                "VALUES (%s, %s, %s, %s, FALSE)",
                 (id_usuario, id_proyecto, contenido, url_video)
             )
             conn.commit()

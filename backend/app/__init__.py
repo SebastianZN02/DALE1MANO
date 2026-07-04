@@ -39,9 +39,16 @@ def create_app():
             cursor.execute("INSERT INTO Tematicas (id_tematica, nombre, descripcion, estado) VALUES (4, 'Justicia Social', 'Derechos', 'ACTIVO')")
             connection.commit()
             print("Base de datos sembrada con temáticas por defecto.")
+        cursor.close()
+        connection.close()
+    except Exception as e:
+        print(f"Advertencia al sembrar temáticas: {e}")
 
-        # Siembra de admin por defecto
-        cursor.execute("SELECT COUNT(*) FROM Usuarios WHERE rol = 'ADMIN'")
+    # Siembra de admin por defecto
+    try:
+        connection = db_instance.get_connection()
+        cursor = connection.cursor()
+        cursor.execute("SELECT COUNT(*) FROM Usuarios WHERE correo = 'admin@dale1mano.org'")
         admin_count = cursor.fetchone()[0]
         if admin_count == 0:
             import bcrypt
@@ -52,10 +59,9 @@ def create_app():
             )
             connection.commit()
             print("Administrador sembrado en la base de datos.")
-
         cursor.close()
         connection.close()
     except Exception as e:
-        print(f"Advertencia al sembrar base de datos: {e}")
+        print(f"Advertencia al sembrar administrador: {e}")
 
     return app

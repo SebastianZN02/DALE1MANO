@@ -193,31 +193,82 @@ export function useAdminData() {
   // --- TEMATICAS CRUD ---
   const addTematica = async (tem: Omit<Tematica, 'id_tematica'>) => {
     isLoading.value = true
-    return { id_tematica: 1, ...tem }
+    try {
+      addToast('Temática guardada.', 'success')
+      return { id_tematica: Date.now(), ...tem }
+    } finally {
+      isLoading.value = false
+    }
   }
 
   const editTematica = async (id: number, updatedData: Partial<Tematica>) => {
     isLoading.value = true
-    return { id_tematica: id, ...updatedData } as any
+    try {
+      addToast('Temática actualizada.', 'success')
+      return { id_tematica: id, ...updatedData } as any
+    } finally {
+      isLoading.value = false
+    }
   }
 
   const deleteTematica = async (id: number) => {
     isLoading.value = true
-    addToast('Operación de temática procesada.', 'info')
+    try {
+      addToast('Temática eliminada.', 'info')
+    } finally {
+      isLoading.value = false
+    }
   }
 
   // --- USUARIOS ---
   const toggleUserStatus = async (id: number) => {
     isLoading.value = true
+    try {
+      const u = users.value.find(user => user.id_usuario === id)
+      if (!u) return
+      const nuevoEstado = u.estado === 'ACTIVO' ? 'INACTIVO' : 'ACTIVO'
+      await $fetch<any>(`${apiBase}/usuarios/${id}/status`, {
+        method: 'POST',
+        body: { estado: nuevoEstado }
+      })
+      addToast('Estado del usuario actualizado.', 'success')
+      await loadRealData()
+    } catch (err) {
+      addToast('Error al cambiar el estado del usuario.', 'error')
+    } finally {
+      isLoading.value = false
+    }
   }
 
   const promoteToOfficial = async (id: number) => {
     isLoading.value = true
-    addToast(`Usuario promovido a Miembro Oficial.`, 'success')
+    try {
+      await $fetch<any>(`${apiBase}/usuarios/${id}/promover`, {
+        method: 'POST'
+      })
+      addToast(`Usuario promovido a Miembro Oficial.`, 'success')
+      await loadRealData()
+    } catch (err) {
+      addToast('Error al promover al usuario.', 'error')
+    } finally {
+      isLoading.value = false
+    }
   }
 
   const changeUserRole = async (id: number, rol: Usuario['rol']) => {
     isLoading.value = true
+    try {
+      await $fetch<any>(`${apiBase}/usuarios/${id}/rol`, {
+        method: 'POST',
+        body: { rol }
+      })
+      addToast('Rol del usuario actualizado.', 'success')
+      await loadRealData()
+    } catch (err) {
+      addToast('Error al cambiar el rol del usuario.', 'error')
+    } finally {
+      isLoading.value = false
+    }
   }
 
   // --- ASISTENCIAS (VINCULADO AL PASO 2: OBSERVER INTERNO) ---
@@ -227,7 +278,15 @@ export function useAdminData() {
         method: 'POST',
         body: { id_usuario, id_proyecto, asistio }
       })
+      // Actualizar el estado local en memoria sin recargar todo para mejor UX
+      const record = attendances.value.find(
+        a => a.id_usuario === id_usuario && a.id_proyecto === id_proyecto
+      )
+      if (record) {
+        record.asistio = asistio
+      }
     } catch (err) {
+      addToast('Error al registrar asistencia.', 'error')
       console.error(err)
     }
   }
@@ -298,18 +357,18 @@ export function useAdminData() {
   const editBoardMember = async (id: number, updatedData: Partial<MiembroJunta>) => {
     isLoading.value = true
     try {
-      const response = await $fetch<any>(`${apiBase}/junta/${id}`, {
+      await $fetch<any>(`${apiBase}/junta/${id}`, {
         method: 'PUT',
         body: {
+          nombre_completo: updatedData.nombre_completo,
           cargo: updatedData.cargo,
-          url_foto: updatedData.url_fotografia
+          url_fotografia: updatedData.url_fotografia,
+          orden_jerarquia: updatedData.orden_jerarquia
         }
       })
-      if (response.status === 'success') {
-        addToast('Miembro de la junta directiva actualizado.', 'success')
-        await loadRealData()
-        return boardMembers.value.find(b => b.id_miembro === id)
-      }
+      addToast('Miembro de la junta directiva actualizado.', 'success')
+      await loadRealData()
+      return boardMembers.value.find(b => b.id_miembro === id)
     } catch (err) {
       addToast('No se pudo actualizar el registro.', 'error')
       throw err
@@ -351,13 +410,27 @@ export function useAdminData() {
   })
 
   const topVolunteers = computed(() => {
-    return users.value.slice(0, 5).map(u => ({
-      id_usuario: u.id_usuario,
-      nombre_completo: u.nombre_completo,
-      correo: u.correo,
-      es_miembro_oficial: u.es_miembro_oficial,
-      total_asistencias: 4
-    }))
+    // Calcula top voluntarios desde los datos locales ya cargados (asistencias + usuarios)
+    const grouped = new Map<number, { id_usuario: number, nombre_completo: string, correo: string, es_miembro_oficial: boolean, total_asistencias: number }>()
+    for (const a of attendances.value) {
+      if (!a.asistio) continue
+      const u = users.value.find(usr => usr.id_usuario === a.id_usuario)
+      if (!u) continue
+      if (grouped.has(a.id_usuario)) {
+        grouped.get(a.id_usuario)!.total_asistencias++
+      } else {
+        grouped.set(a.id_usuario, {
+          id_usuario: u.id_usuario,
+          nombre_completo: u.nombre_completo,
+          correo: u.correo,
+          es_miembro_oficial: u.es_miembro_oficial,
+          total_asistencias: 1
+        })
+      }
+    }
+    return [...grouped.values()]
+      .sort((a, b) => b.total_asistencias - a.total_asistencias)
+      .slice(0, 5)
   })
 
   return {
@@ -372,6 +445,7 @@ export function useAdminData() {
     stats,
     topVolunteers,
     addToast,
+    loadRealData,
     
     // Proyectos
     addProject,

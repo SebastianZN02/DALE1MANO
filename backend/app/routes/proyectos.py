@@ -40,6 +40,8 @@ def crear_proyecto():
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
     except Exception as e:
+        if getattr(e, 'errno', None) == 1644:
+            return jsonify({"error": e.msg if hasattr(e, 'msg') else str(e)}), 400
         return jsonify({"error": "Error al crear proyecto", "details": str(e)}), 500
 
 
@@ -62,6 +64,8 @@ def actualizar_proyecto(id_proyecto):
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
     except Exception as e:
+        if getattr(e, 'errno', None) == 1644:
+            return jsonify({"error": e.msg if hasattr(e, 'msg') else str(e)}), 400
         return jsonify({"error": "Error al actualizar proyecto", "details": str(e)}), 500
 
 
@@ -97,6 +101,8 @@ def inscribir_usuario():
         proyecto_service.inscribir_usuario(id_usuario, id_proyecto)
         return jsonify({"status": "success", "message": "Usuario inscrito exitosamente."}), 200
     except Exception as e:
+        if getattr(e, 'errno', None) == 1452:
+            return jsonify({"error": "El usuario o proyecto especificado no existe."}), 400
         return jsonify({"error": str(e)}), 400
 
 
@@ -114,4 +120,6 @@ def marcar_asistencia():
         call_sp("SP_MarcarAsistencia", (id_usuario, id_proyecto, asistio))
         return jsonify({"status": "success", "message": "Asistencia registrada exitosamente."}), 200
     except Exception as e:
+        if getattr(e, 'errno', None) == 1452:
+            return jsonify({"error": "El usuario o proyecto especificado no existe."}), 400
         return jsonify({"error": "Error al registrar asistencia", "details": str(e)}), 500

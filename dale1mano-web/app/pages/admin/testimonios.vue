@@ -67,7 +67,7 @@
 
           <!-- Contenido del testimonio -->
           <p class="text-xs text-slate-600 leading-relaxed italic bg-slate-50 p-4 rounded-xl border border-slate-100">
-            "{ { test.contenido } }"
+            "{{ test.contenido }}"
           </p>
 
           <!-- Enlace a Video si existe (Estilo Ejecutivo) -->

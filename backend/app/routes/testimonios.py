@@ -30,6 +30,8 @@ def crear_testimonio():
     except ValueError as ve:
         return jsonify({"status": "error", "message": str(ve)}), 400
     except Exception as e:
+        if getattr(e, 'errno', None) == 1452:
+            return jsonify({"status": "error", "message": "El usuario o proyecto especificado no existe."}), 400
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
