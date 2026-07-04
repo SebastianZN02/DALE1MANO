@@ -14,16 +14,44 @@ def listar_miembros():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
+@junta_bp.route('/api/junta', methods=['POST'])
+def crear_miembro():
+    try:
+        datos = request.get_json() or {}
+        nombre_completo = datos.get('nombre_completo')
+        cargo = datos.get('cargo')
+        url_fotografia = datos.get('url_fotografia') or datos.get('url_foto')
+        orden_jerarquia = datos.get('orden_jerarquia', 1)
+
+        service.crear_miembro(nombre_completo, cargo, url_fotografia, orden_jerarquia)
+        return jsonify({"status": "success", "message": "Miembro creado correctamente"}), 201
+    except ValueError as ve:
+        return jsonify({"status": "error", "message": str(ve)}), 400
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
 @junta_bp.route('/api/junta/<int:id_miembro>', methods=['PUT'])
 def actualizar_miembro(id_miembro):
     try:
-        datos = request.get_json()
+        datos = request.get_json() or {}
+        nombre_completo = datos.get('nombre_completo')
         cargo = datos.get('cargo')
-        url_foto = datos.get('url_foto')
+        url_foto = datos.get('url_fotografia') or datos.get('url_foto')
+        orden_jerarquia = datos.get('orden_jerarquia', 1)
 
-        service.modificar_perfil_miembro(id_miembro, cargo, url_foto)
+        service.modificar_perfil_miembro(id_miembro, nombre_completo, cargo, url_foto, orden_jerarquia)
         return jsonify({"status": "success", "message": "Miembro actualizado correctamente"}), 200
     except ValueError as ve:
         return jsonify({"status": "error", "message": str(ve)}), 400
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@junta_bp.route('/api/junta/<int:id_miembro>', methods=['DELETE'])
+def eliminar_miembro(id_miembro):
+    try:
+        service.eliminar_miembro(id_miembro)
+        return jsonify({"status": "success", "message": "Miembro eliminado correctamente"}), 200
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500

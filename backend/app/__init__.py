@@ -5,6 +5,7 @@ from .routes.proyectos import proyectos_bp
 from .routes.auth import auth_bp
 from .routes.testimonios import testimonios_bp
 from .routes.junta import junta_bp
+from .routes.usuarios import usuarios_bp
 
 def create_app():
     """
@@ -22,6 +23,7 @@ def create_app():
     app.register_blueprint(auth_bp)
     app.register_blueprint(testimonios_bp)
     app.register_blueprint(junta_bp)
+    app.register_blueprint(usuarios_bp)
 
     # Siembra de temáticas por defecto para cumplir con restricciones FK en Docker
     from .db import db_instance

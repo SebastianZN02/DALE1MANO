@@ -222,6 +222,7 @@ async function submitForm() {
   try {
     if (isEditing.value && editingId.value) {
       await editBoardMember(editingId.value, {
+        nombre_completo: form.nombre_completo,
         cargo: form.cargo,
         url_fotografia: form.url_fotografia,
         orden_jerarquia: form.orden_jerarquia
