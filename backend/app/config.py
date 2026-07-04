@@ -7,6 +7,8 @@ load_dotenv()
 
 class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', 'dale1mano_secret_key_prod_2026')
+    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'jwt_secret_key_dale1mano_2026')
+    JWT_EXPIRATION_H = int(os.getenv('JWT_EXPIRATION_H', 24))
 
     # Configuración de MySQL adaptada para las variables del docker-compose y .env local
     MYSQL_HOST = os.getenv('MYSQL_HOST') or os.getenv('DB_HOST') or 'd1mcr_mysql_db'
