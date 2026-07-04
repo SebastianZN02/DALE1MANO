@@ -50,7 +50,7 @@ async function handleLogin() {
       }
     } else {
       // Conexión real con la API
-      const url = `${config.public.apiBase}/api/auth/login` 
+      const url = `${config.public.apiBase}/auth/login` 
       data = await $fetch<any>(url, {
         method: 'POST',
         body: {

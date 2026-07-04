@@ -117,7 +117,7 @@ async function cargarProyectos() {
     let data
     try {
       // Intentar conectar con la API real
-      const url = `${config.public.apiBase}/api/proyectos?estado=${estadoAPI}`
+      const url = `${config.public.apiBase}/proyectos?estado=${estadoAPI}`
       data = await $fetch(url)
     } catch (e) {
       console.warn('API de proyectos no disponible, cargando mock local del panel de administración.')

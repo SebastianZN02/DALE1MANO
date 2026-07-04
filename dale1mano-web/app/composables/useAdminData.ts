@@ -65,7 +65,12 @@ export interface Toast {
 // Estado compartido (Singleton en memoria)
 const initialized = ref(false)
 const users = ref<Usuario[]>([])
-const thematics = ref<Tematica[]>([])
+const thematics = ref<Tematica[]>([
+  { id_tematica: 1, nombre: 'Educación', descripcion: 'Programas y tutorías educativas', estado: 'ACTIVO' },
+  { id_tematica: 2, nombre: 'Salud', descripcion: 'Jornadas médicas y salud mental', estado: 'ACTIVO' },
+  { id_tematica: 3, nombre: 'Medio Ambiente', descripcion: 'Campañas de reforestación y reciclaje', estado: 'ACTIVO' },
+  { id_tematica: 4, nombre: 'Justicia Social', descripcion: 'Derechos de la juventud y equidad de género', estado: 'ACTIVO' }
+])
 const projects = ref<Proyecto[]>([])
 const attendances = ref<Asistencia[]>([])
 const testimonials = ref<Testimonio[]>([])

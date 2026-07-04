@@ -6,12 +6,14 @@ services:
     container_name: d1mcr_mysql_db
     restart: always
     environment:
-      MYSQL_DATABASE: d1mcr_db
+      MYSQL_DATABASE: dale1mano_db
       MYSQL_ROOT_PASSWORD: root_password_2026
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
-      - ./BD:/docker-entrypoint-initdb.d
+      - ./BD/TABLAS_BD.sql:/docker-entrypoint-initdb.d/01_TABLAS_BD.sql
+      - ./BD/sps.sql:/docker-entrypoint-initdb.d/02_sps.sql
+      - ./BD/EVENTS.sql:/docker-entrypoint-initdb.d/03_EVENTS.sql
 
   backend:
     build: ./backend
@@ -23,6 +25,6 @@ services:
       - DB_HOST=db
       - DB_USER=root
       - DB_PASSWORD=root_password_2026
-      - DB_NAME=d1mcr_db
+      - DB_NAME=dale1mano_db
     depends_on:
       - db
