@@ -21,12 +21,16 @@ import { ref } from 'vue'
 // Estado para controlar la apertura del modal
 const isLoginModalOpen = ref(false)
 
-// Función que se ejecuta cuando .NET confirma que las credenciales son correctas
-function handleLoginSuccess(adminData: { adminId: number; nombre: string }) {
+function handleLoginSuccess(adminData: { adminId: number; nombre: string; rol: string }) {
   isLoginModalOpen.value = false
   
-  // Redirección nativa de Nuxt hacia tu sección privada de administración
-  navigateTo('/admin') 
+  // Redirección hacia administración solo si es un rol ADMIN
+  if (adminData.rol === 'ADMIN') {
+    navigateTo('/admin') 
+  } else {
+    // Si es un voluntario común (USER), lo dejamos en la página principal
+    navigateTo('/')
+  }
 }
 
 function handleOpenLogin() {

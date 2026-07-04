@@ -194,6 +194,30 @@ const cerrarModal = () => {
 }
 
 const enviarFormulario = async () => {
+  // Validaciones
+  const nameRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/
+  if (!nameRegex.test(form.value.nombre.trim())) {
+    alert('El nombre completo solo debe contener letras y espacios.')
+    return
+  }
+
+  const cedulaRegex = /^[0-9]+$/
+  if (!cedulaRegex.test(form.value.cedula.trim())) {
+    alert('La cédula solo debe contener números.')
+    return
+  }
+
+  const telefonoRegex = /^[0-9]+$/
+  if (!telefonoRegex.test(form.value.telefono.trim())) {
+    alert('El número telefónico solo debe contener números.')
+    return
+  }
+
+  if (form.value.cantidad < 1) {
+    alert('La cantidad de miembros debe ser al menos 1.')
+    return
+  }
+
   try {
     // 1. Verificar si el usuario ya existe en nuestro estado reactivo, sino crearlo
     let user = users.value.find(u => u.nombre_completo.toLowerCase() === form.value.nombre.trim().toLowerCase())

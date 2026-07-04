@@ -7,7 +7,7 @@ defineProps<{
 
 const emit = defineEmits<{
   (e: 'close'): void
-  (e: 'loginSuccess', adminData: { adminId: number; nombre: string }): void
+  (e: 'loginSuccess', adminData: { adminId: number; nombre: string; rol: string }): void
 }>()
 
 const email = ref('')
@@ -46,7 +46,8 @@ async function handleLogin() {
       data = {
         token: 'mock_token_123',
         adminId: 1,
-        nombre: 'Administrador Demo'
+        nombre: 'Administrador Demo',
+        rol: 'ADMIN'
       }
     } else {
       // Conexión real con la API
@@ -67,7 +68,7 @@ async function handleLogin() {
     adminNameCookie.value = data.nombre
 
     setTimeout(() => {
-      emit('loginSuccess', { adminId: data.adminId, nombre: data.nombre })
+      emit('loginSuccess', { adminId: data.adminId, nombre: data.nombre, rol: data.rol || 'USER' })
       resetForm()
     }, 1200)
 

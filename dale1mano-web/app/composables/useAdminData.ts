@@ -97,9 +97,12 @@ export function useAdminData() {
     isLoading.value = true
     try {
       // Cargamos de forma simultánea los módulos implementados en el Backend
-      const [resJunta, resTestimonios] = await Promise.all([
+      const [resJunta, resTestimonios, resUsuarios, resProyectos, resAsistencias] = await Promise.all([
         $fetch<any>(`${apiBase}/junta`),
-        $fetch<any>(`${apiBase}/testimonios`)
+        $fetch<any>(`${apiBase}/testimonios`),
+        $fetch<any>(`${apiBase}/usuarios`),
+        $fetch<any>(`${apiBase}/proyectos`),
+        $fetch<any>(`${apiBase}/asistencias`)
       ])
 
       if (resJunta.status === 'success') {
@@ -107,6 +110,17 @@ export function useAdminData() {
       }
       if (resTestimonios.status === 'success') {
         testimonials.value = resTestimonios.data
+      }
+      if (resUsuarios.status === 'success') {
+        users.value = resUsuarios.data
+      }
+      if (Array.isArray(resProyectos)) {
+        projects.value = resProyectos
+      } else if (resProyectos && resProyectos.status === 'success') {
+        projects.value = resProyectos.data
+      }
+      if (resAsistencias.status === 'success') {
+        attendances.value = resAsistencias.data
       }
       
       initialized.value = true

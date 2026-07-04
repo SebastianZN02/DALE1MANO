@@ -39,6 +39,20 @@ def create_app():
             cursor.execute("INSERT INTO Tematicas (id_tematica, nombre, descripcion, estado) VALUES (4, 'Justicia Social', 'Derechos', 'ACTIVO')")
             connection.commit()
             print("Base de datos sembrada con temáticas por defecto.")
+
+        # Siembra de admin por defecto
+        cursor.execute("SELECT COUNT(*) FROM Usuarios WHERE rol = 'ADMIN'")
+        admin_count = cursor.fetchone()[0]
+        if admin_count == 0:
+            import bcrypt
+            contrasena_hash = bcrypt.hashpw("admin123".encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+            cursor.execute(
+                "INSERT INTO Usuarios (nombre_completo, correo, contrasena_hash, rol) VALUES (%s, %s, %s, %s)",
+                ("Administrador Dale1Mano", "admin@dale1mano.org", contrasena_hash, "ADMIN")
+            )
+            connection.commit()
+            print("Administrador sembrado en la base de datos.")
+
         cursor.close()
         connection.close()
     except Exception as e:

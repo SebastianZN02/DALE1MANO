@@ -219,6 +219,16 @@ async function submitForm() {
     return
   }
 
+  const nameRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/
+  if (!nameRegex.test(form.nombre_completo.trim())) {
+    addToast('El nombre completo solo debe contener letras y espacios.', 'error')
+    return
+  }
+  if (!nameRegex.test(form.cargo.trim())) {
+    addToast('El cargo solo debe contener letras y espacios.', 'error')
+    return
+  }
+
   try {
     if (isEditing.value && editingId.value) {
       await editBoardMember(editingId.value, {

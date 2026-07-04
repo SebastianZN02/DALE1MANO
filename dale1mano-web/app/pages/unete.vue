@@ -22,6 +22,18 @@ async function handleRegister() {
     return
   }
 
+  const nameRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/
+  if (!nameRegex.test(nombre.value.trim())) {
+    errorMessage.value = 'El nombre completo solo debe contener letras y espacios.'
+    return
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(email.value.trim())) {
+    errorMessage.value = 'Por favor, ingresa un correo electrónico válido.'
+    return
+  }
+
   if (password.value !== confirmPassword.value) {
     errorMessage.value = 'Las contraseñas no coinciden.'
     return
