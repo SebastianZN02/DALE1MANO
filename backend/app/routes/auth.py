@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.dependencies import get_auth_service
+from ..dependencies import get_auth_service
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
 
@@ -22,7 +22,6 @@ def registro():
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
     except Exception as e:
-        # Si la BD tira error de duplicado, o cualquier otra cosa
         error_msg = str(e)
         if "ya se encuentra registrado" in error_msg:
             return jsonify({"error": error_msg}), 400

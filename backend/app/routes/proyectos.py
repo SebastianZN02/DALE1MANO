@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.dependencies import get_proyecto_service
+from ..dependencies import get_proyecto_service
 
 proyectos_bp = Blueprint("proyectos", __name__, url_prefix="/api/proyectos")
 

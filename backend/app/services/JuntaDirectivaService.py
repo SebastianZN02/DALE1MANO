@@ -5,7 +5,7 @@ class JuntaDirectivaService:
 
     def __init__(self, repository: IJuntaDirectivaRepository = None):
         # Si no se inyecta un repositorio, se utiliza la implementación concreta por defecto
-        self.repository = repository or JuntaDirectivaRepository()
+        self.repository = repository if repository is not None else JuntaDirectivaRepository()
 
     def listar_miembros(self):
         try:

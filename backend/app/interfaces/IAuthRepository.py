@@ -3,11 +3,6 @@ from typing import Optional
 
 
 class IAuthRepository(ABC):
-    """
-    Interfaz del repositorio de autenticación.
-    Define el contrato para operaciones de usuario y credenciales.
-    Principio: DIP — la lógica de negocio depende de esta abstracción.
-    """
 
     @abstractmethod
     def registrar_usuario(self, nombre: str, correo: str, contrasena_hash: str) -> None:

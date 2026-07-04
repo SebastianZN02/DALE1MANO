@@ -1,10 +1,12 @@
-from repositories.TestimoniosRepository import TestimoniosRepository
-from interfaces.ITestimoniosRepository import ITestimoniosRepository
+from ..repositories.TestimoniosRepository import TestimoniosRepository
+from ..interfaces.ITestimoniosRepository import ITestimoniosRepository
+
 
 class TestimoniosService:
-    
+
     def __init__(self, repository: ITestimoniosRepository = None):
-        self.repository = repository or TestimoniosRepository()
+        """Constructor corregido con importaciones relativas."""
+        self.repository = repository if repository is not None else TestimoniosRepository()
 
     def obtener_testimonios_publicos(self):
         try:

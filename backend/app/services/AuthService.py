@@ -3,7 +3,8 @@ import bcrypt
 import jwt
 from flask import current_app
 from typing import Optional
-from app.interfaces.IAuthRepository import IAuthRepository
+from ..interfaces.IAuthRepository import IAuthRepository
+from ..repositories.AuthRepository import AuthRepository
 
 
 class AuthService:
@@ -12,8 +13,9 @@ class AuthService:
     Sigue el principio de Inversión de Dependencias (DIP) al depender de IAuthRepository.
     """
 
-    def __init__(self, auth_repo: IAuthRepository):
-        self.auth_repo = auth_repo
+    def __init__(self, repository: IAuthRepository = None):
+        """Constructor corregido para aceptar inyección estándar o instanciar por defecto."""
+        self.repository = repository if repository is not None else AuthRepository()
 
     def registrar_usuario(self, nombre: str, correo: str, contrasena: str) -> None:
         if not nombre or not correo or not contrasena:
@@ -27,14 +29,14 @@ class AuthService:
         contrasena_hash = bcrypt.hashpw(contrasena.encode("utf-8"), salt).decode("utf-8")
 
         # Guardar en repositorio
-        self.auth_repo.registrar_usuario(nombre, correo, contrasena_hash)
+        self.repository.registrar_usuario(nombre, correo, contrasena_hash)
 
     def login(self, correo: str, contrasena: str) -> dict:
         if not correo or not contrasena:
             raise ValueError("El correo y la contraseña son obligatorios.")
 
         # Obtener el usuario de la BD
-        user = self.auth_repo.obtener_usuario_por_correo(correo)
+        user = self.repository.obtener_usuario_por_correo(correo)
         if not user:
             raise ValueError("Credenciales inválidas o cuenta inactiva.")
 

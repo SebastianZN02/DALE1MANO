@@ -1,8 +1,9 @@
-from interfaces.IJuntaDirectivaRepository import IJuntaDirectivaRepository
-from db import db_instance
+from ..interfaces.IJuntaDirectivaRepository import IJuntaDirectivaRepository
+from ..db import db_instance
+
 
 class JuntaDirectivaRepository(IJuntaDirectivaRepository):
-    
+
     def __init__(self, db_provider=db_instance):
         self.db = db_provider
 
@@ -22,7 +23,8 @@ class JuntaDirectivaRepository(IJuntaDirectivaRepository):
         conn = self.db.get_connection()
         cursor = conn.cursor()
         try:
-            cursor.callproc('SP_ActualizarMiembroJunta', [id_miembro, cargo, url_foto])
+            cursor.callproc('SP_ActualizarMiembroJunta', [
+                            id_miembro, cargo, url_foto])
             conn.commit()
             return True
         except Exception as e:

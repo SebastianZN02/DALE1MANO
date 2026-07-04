@@ -1,5 +1,5 @@
-from flask import Blueprint, jsonify  # type: ignore[import]
-from services.TestimoniosService import TestimoniosService
+from flask import Blueprint, jsonify
+from ..services.TestimoniosService import TestimoniosService
 
 testimonios_bp = Blueprint('testimonios_bp', __name__)
 service = TestimoniosService()

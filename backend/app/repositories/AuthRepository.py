@@ -1,6 +1,6 @@
 from typing import Optional
-from app.interfaces.IAuthRepository import IAuthRepository
-from app.db import call_sp
+from ..interfaces.IAuthRepository import IAuthRepository
+from ..db import call_sp
 
 
 class AuthRepository(IAuthRepository):

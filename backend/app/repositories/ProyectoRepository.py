@@ -1,6 +1,6 @@
 from typing import Optional
-from app.interfaces.IProyectoRepository import IProyectoRepository
-from app.db import call_sp
+from ..interfaces.IProyectoRepository import IProyectoRepository
+from ..db import call_sp
 
 
 class ProyectoRepository(IProyectoRepository):
@@ -19,4 +19,4 @@ class ProyectoRepository(IProyectoRepository):
         for p in proyectos:
             if p["id_proyecto"] == id_proyecto:
                 return p
-        return None
+            return None

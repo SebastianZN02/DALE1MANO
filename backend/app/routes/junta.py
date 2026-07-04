@@ -1,5 +1,5 @@
-from flask import Blueprint, jsonify, request  # type: ignore[import]
-from services.JuntaDirectivaService import JuntaDirectivaService
+from flask import Blueprint, jsonify, request
+from ..services.JuntaDirectivaService import JuntaDirectivaService
 
 junta_bp = Blueprint('junta_bp', __name__)
 service = JuntaDirectivaService()

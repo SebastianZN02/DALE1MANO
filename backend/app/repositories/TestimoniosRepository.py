@@ -1,8 +1,9 @@
-from interfaces.ITestimoniosRepository import ITestimoniosRepository
-from db import db_instance
+from ..interfaces.ITestimoniosRepository import ITestimoniosRepository
+from ..db import db_instance
+
 
 class TestimoniosRepository(ITestimoniosRepository):
-    
+
     def __init__(self, db_provider=db_instance):
         self.db = db_provider
 
